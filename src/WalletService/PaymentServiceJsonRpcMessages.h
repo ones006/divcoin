@@ -14,11 +14,9 @@
 
 namespace PaymentService {
 
-/* Forward declaration to avoid circular dependency from including "WalletService.h" */
-class WalletService;
+const uint32_t DEFAULT_ANONYMITY_LEVEL = 6;
 
 class RequestSerializationError: public std::exception {
-
 public:
   virtual const char* what() const throw() override { return "Request error"; }
 };
@@ -49,9 +47,9 @@ struct Reset {
   struct Request {
     std::string viewSecretKey;
 
-    uint64_t scanHeight = 0;
+    uint64_t scanHeight;
 
-    bool newAddress = false;
+    bool newAddress;
 
     void serialize(CryptoNote::ISerializer& serializer);
   };
@@ -119,9 +117,9 @@ struct CreateAddress {
     std::string spendSecretKey;
     std::string spendPublicKey;
 
-    uint64_t scanHeight = 0;
+    uint64_t scanHeight;
 
-    bool newAddress = false;
+    bool newAddress;
 
     void serialize(CryptoNote::ISerializer& serializer);
   };
@@ -137,9 +135,9 @@ struct CreateAddressList {
   struct Request {
     std::vector<std::string> spendSecretKeys;
 
-    uint64_t scanHeight = 0;
+    uint64_t scanHeight;
 
-    bool newAddress = false;
+    bool newAddress;
 
     void serialize(CryptoNote::ISerializer& serializer);
   };
@@ -323,12 +321,12 @@ struct SendTransaction {
     std::vector<WalletRpcOrder> transfers;
     std::string changeAddress;
     uint64_t fee = 0;
-    uint32_t anonymity;
+    uint32_t anonymity = DEFAULT_ANONYMITY_LEVEL;
     std::string extra;
     std::string paymentId;
     uint64_t unlockTime = 0;
 
-    void serialize(CryptoNote::ISerializer& serializer, const WalletService &service);
+    void serialize(CryptoNote::ISerializer& serializer);
   };
 
   struct Response {
@@ -344,12 +342,12 @@ struct CreateDelayedTransaction {
     std::vector<WalletRpcOrder> transfers;
     std::string changeAddress;
     uint64_t fee = 0;
-    uint32_t anonymity;
+    uint32_t anonymity = DEFAULT_ANONYMITY_LEVEL;
     std::string extra;
     std::string paymentId;
     uint64_t unlockTime = 0;
 
-    void serialize(CryptoNote::ISerializer& serializer, const WalletService &service);
+    void serialize(CryptoNote::ISerializer& serializer);
   };
 
   struct Response {
@@ -398,11 +396,11 @@ struct SendDelayedTransaction {
 struct SendFusionTransaction {
   struct Request {
     uint64_t threshold;
-    uint32_t anonymity;
+    uint32_t anonymity = DEFAULT_ANONYMITY_LEVEL;
     std::vector<std::string> addresses;
     std::string destinationAddress;
 
-    void serialize(CryptoNote::ISerializer& serializer, const WalletService &service);
+    void serialize(CryptoNote::ISerializer& serializer);
   };
 
   struct Response {

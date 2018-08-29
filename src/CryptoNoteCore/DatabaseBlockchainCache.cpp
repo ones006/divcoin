@@ -867,7 +867,7 @@ void DatabaseBlockchainCache::insertBlockTimestamp(BlockchainWriteBatch& batch, 
 void DatabaseBlockchainCache::pushBlock(const CachedBlock& cachedBlock,
                                         const std::vector<CachedTransaction>& cachedTransactions,
                                         const TransactionValidatorState& validatorState, size_t blockSize,
-                                        uint64_t generatedCoins, uint64_t blockDifficulty, RawBlock&& rawBlock) {
+                                        uint64_t generatedCoins, Difficulty blockDifficulty, RawBlock&& rawBlock) {
   BlockchainWriteBatch batch;
   logger(Logging::DEBUGGING) << "push block with hash " << cachedBlock.getBlockHash() << ", and "
                              << cachedTransactions.size() + 1 << " transactions"; //+1 for base transaction
@@ -1117,20 +1117,20 @@ std::vector<uint64_t> DatabaseBlockchainCache::getLastBlocksSizes(size_t count, 
   return getLastUnits(count, blockIndex, useGenesis, [](const CachedBlockInfo& cb) { return cb.blockSize; });
 }
 
-std::vector<uint64_t> DatabaseBlockchainCache::getLastCumulativeDifficulties(size_t count, uint32_t blockIndex,
+std::vector<Difficulty> DatabaseBlockchainCache::getLastCumulativeDifficulties(size_t count, uint32_t blockIndex,
                                                                                UseGenesis useGenesis) const {
   return getLastUnits(count, blockIndex, useGenesis,
                       [](const CachedBlockInfo& info) { return info.cumulativeDifficulty; });
 }
-std::vector<uint64_t> DatabaseBlockchainCache::getLastCumulativeDifficulties(size_t count) const {
+std::vector<Difficulty> DatabaseBlockchainCache::getLastCumulativeDifficulties(size_t count) const {
   return getLastCumulativeDifficulties(count, getTopBlockIndex(), UseGenesis{true});
 }
 
-uint64_t DatabaseBlockchainCache::getDifficultyForNextBlock() const {
+Difficulty DatabaseBlockchainCache::getDifficultyForNextBlock() const {
   return getDifficultyForNextBlock(getTopBlockIndex());
 }
 
-uint64_t DatabaseBlockchainCache::getDifficultyForNextBlock(uint32_t blockIndex) const {
+Difficulty DatabaseBlockchainCache::getDifficultyForNextBlock(uint32_t blockIndex) const {
   assert(blockIndex <= getTopBlockIndex());
   uint8_t nextBlockMajorVersion = getBlockMajorVersionForHeight(blockIndex+1);
   auto timestamps = getLastTimestamps(currency.difficultyBlocksCountByBlockVersion(nextBlockMajorVersion, blockIndex), blockIndex, UseGenesis{false});
@@ -1139,11 +1139,11 @@ uint64_t DatabaseBlockchainCache::getDifficultyForNextBlock(uint32_t blockIndex)
   return currency.getNextDifficulty(nextBlockMajorVersion, blockIndex, std::move(timestamps), std::move(commulativeDifficulties));
 }
 
-uint64_t DatabaseBlockchainCache::getCurrentCumulativeDifficulty() const {
+Difficulty DatabaseBlockchainCache::getCurrentCumulativeDifficulty() const {
   return getCachedBlockInfo(getTopBlockIndex()).cumulativeDifficulty;
 }
 
-uint64_t DatabaseBlockchainCache::getCurrentCumulativeDifficulty(uint32_t blockIndex) const {
+Difficulty DatabaseBlockchainCache::getCurrentCumulativeDifficulty(uint32_t blockIndex) const {
   assert(blockIndex <= getTopBlockIndex());
   return getCachedBlockInfo(blockIndex).cumulativeDifficulty;
 }

@@ -13,6 +13,7 @@
 
 #include "CryptoNoteCore/CryptoNoteBasic.h"
 #include "CryptoNoteCore/Currency.h"
+#include "CryptoNoteCore/Difficulty.h"
 #include "CryptoNoteCore/IMinerHandler.h"
 #include "CryptoNoteCore/MinerConfig.h"
 #include "CryptoNoteCore/OnceInInterval.h"
@@ -28,7 +29,7 @@ namespace CryptoNote {
     ~miner();
 
     bool init(const MinerConfig& config);
-    bool set_block_template(const BlockTemplate& bl, const uint64_t& diffic);
+    bool set_block_template(const BlockTemplate& bl, const Difficulty& diffic);
     bool on_block_chain_update();
     bool start(const AccountPublicAddress& adr, size_t threads_count);
     uint64_t get_speed();
@@ -38,7 +39,7 @@ namespace CryptoNote {
     bool on_idle();
     void on_synchronized();
     //synchronous analog (for fast calls)
-    static bool find_nonce_for_given_block(BlockTemplate& bl, const uint64_t& diffic);
+    static bool find_nonce_for_given_block(BlockTemplate& bl, const Difficulty& diffic);
     void pause();
     void resume();
     void do_print_hashrate(bool do_hr);
@@ -64,7 +65,7 @@ namespace CryptoNote {
     BlockTemplate m_template;
     std::atomic<uint32_t> m_template_no;
     std::atomic<uint32_t> m_starter_nonce;
-    uint64_t m_diffic;
+    Difficulty m_diffic;
 
     std::atomic<uint32_t> m_threads_total;
     std::atomic<int32_t> m_pausers_count;

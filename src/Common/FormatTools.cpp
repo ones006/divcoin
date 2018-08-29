@@ -1,6 +1,7 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018, The DivCoin Developers
 // 
 // Please see the included LICENSE file for more information.
 
@@ -163,7 +164,7 @@ std::string get_upgrade_info(uint64_t supported_height, std::vector<uint64_t> up
     {
         if (upgrade > supported_height)
         {
-            return "The network forked at height " + std::to_string(upgrade) + ", please update your software: https://turtlecoin.lol";
+            return "The network forked at height " + std::to_string(upgrade) + ", please update your software: https://divgold.co.id";
         }
     }
 

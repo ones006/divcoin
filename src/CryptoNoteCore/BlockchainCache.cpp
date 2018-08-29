@@ -129,7 +129,7 @@ BlockchainCache::BlockchainCache(const std::string& filename, const Currency& cu
 void BlockchainCache::pushBlock(const CachedBlock& cachedBlock,
                                 const std::vector<CachedTransaction>& cachedTransactions,
                                 const TransactionValidatorState& validatorState, size_t blockSize,
-                                uint64_t generatedCoins, uint64_t blockDifficulty, RawBlock&& rawBlock) {
+                                uint64_t generatedCoins, Difficulty blockDifficulty, RawBlock&& rawBlock) {
   //we have to call this function from constructor so it has to be non-virtual
   doPushBlock(cachedBlock, cachedTransactions, validatorState, blockSize, generatedCoins, blockDifficulty, std::move(rawBlock));
 }
@@ -137,13 +137,13 @@ void BlockchainCache::pushBlock(const CachedBlock& cachedBlock,
 void BlockchainCache::doPushBlock(const CachedBlock& cachedBlock,
                                 const std::vector<CachedTransaction>& cachedTransactions,
                                 const TransactionValidatorState& validatorState, size_t blockSize,
-                                uint64_t generatedCoins, uint64_t blockDifficulty, RawBlock&& rawBlock) {
+                                uint64_t generatedCoins, Difficulty blockDifficulty, RawBlock&& rawBlock) {
   logger(Logging::DEBUGGING) << "Pushing block " << cachedBlock.getBlockHash() << " at index " << cachedBlock.getBlockIndex();
 
   assert(blockSize > 0);
   assert(blockDifficulty > 0);
 
-  uint64_t cumulativeDifficulty = 0;
+  Difficulty cumulativeDifficulty = 0;
   uint64_t alreadyGeneratedCoins = 0;
   uint64_t alreadyGeneratedTransactions = 0;
 
@@ -221,7 +221,7 @@ PushedBlockInfo BlockchainCache::getPushedBlockInfo(uint32_t blockIndex) const {
       pushedBlockInfo.blockDifficulty = cachedBlock.cumulativeDifficulty;
       pushedBlockInfo.generatedCoins = cachedBlock.alreadyGeneratedCoins;
     } else {
-      uint64_t cumulativeDifficulty = parent->getLastCumulativeDifficulties(1, startIndex - 1, addGenesisBlock)[0];
+      Difficulty cumulativeDifficulty = parent->getLastCumulativeDifficulties(1, startIndex - 1, addGenesisBlock)[0];
       uint64_t alreadyGeneratedCoins = parent->getAlreadyGeneratedCoins(startIndex - 1);
 
       pushedBlockInfo.blockDifficulty = cachedBlock.cumulativeDifficulty - cumulativeDifficulty;
@@ -934,11 +934,11 @@ std::vector<uint64_t> BlockchainCache::getLastBlocksSizes(size_t count, uint32_t
   return getLastUnits(count, blockIndex, useGenesis, [](const CachedBlockInfo& cb) { return cb.blockSize; });
 }
 
-uint64_t BlockchainCache::getDifficultyForNextBlock() const {
+Difficulty BlockchainCache::getDifficultyForNextBlock() const {
   return getDifficultyForNextBlock(getTopBlockIndex());
 }
 
-uint64_t BlockchainCache::getDifficultyForNextBlock(uint32_t blockIndex) const {
+Difficulty BlockchainCache::getDifficultyForNextBlock(uint32_t blockIndex) const {
   assert(blockIndex <= getTopBlockIndex());
   uint8_t nextBlockMajorVersion = getBlockMajorVersionForHeight(blockIndex+1);
   auto timestamps = getLastTimestamps(currency.difficultyBlocksCountByBlockVersion(nextBlockMajorVersion, blockIndex), blockIndex, skipGenesisBlock);
@@ -947,12 +947,12 @@ uint64_t BlockchainCache::getDifficultyForNextBlock(uint32_t blockIndex) const {
   return currency.getNextDifficulty(nextBlockMajorVersion, blockIndex, std::move(timestamps), std::move(commulativeDifficulties));
 }
 
-uint64_t BlockchainCache::getCurrentCumulativeDifficulty() const {
+Difficulty BlockchainCache::getCurrentCumulativeDifficulty() const {
   assert(!blockInfos.empty());
   return blockInfos.get<BlockIndexTag>().back().cumulativeDifficulty;
 }
 
-uint64_t BlockchainCache::getCurrentCumulativeDifficulty(uint32_t blockIndex) const {
+Difficulty BlockchainCache::getCurrentCumulativeDifficulty(uint32_t blockIndex) const {
   assert(!blockInfos.empty());
   assert(blockIndex <= getTopBlockIndex());
   return blockInfos.get<BlockIndexTag>().at(blockIndex - startIndex).cumulativeDifficulty;
@@ -980,13 +980,13 @@ uint64_t BlockchainCache::getAlreadyGeneratedTransactions(uint32_t blockIndex) c
   return blockInfos.get<BlockIndexTag>().at(blockIndex - startIndex).alreadyGeneratedTransactions;
 }
 
-std::vector<uint64_t> BlockchainCache::getLastCumulativeDifficulties(size_t count, uint32_t blockIndex,
+std::vector<Difficulty> BlockchainCache::getLastCumulativeDifficulties(size_t count, uint32_t blockIndex,
                                                                        UseGenesis useGenesis) const {
   return getLastUnits(count, blockIndex, useGenesis,
                       [](const CachedBlockInfo& info) { return info.cumulativeDifficulty; });
 }
 
-std::vector<uint64_t> BlockchainCache::getLastCumulativeDifficulties(size_t count) const {
+std::vector<Difficulty> BlockchainCache::getLastCumulativeDifficulties(size_t count) const {
   return getLastCumulativeDifficulties(count, getTopBlockIndex(), skipGenesisBlock);
 }
 

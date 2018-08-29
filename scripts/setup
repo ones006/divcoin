@@ -1,4 +1,4 @@
-# setup - pull a copy of turtlecoin-development 
+# setup - pull a copy of divcoin-development 
 # and put it inside a timestamped folder.
 # rock made this
 #!/usr/bin/env bash
@@ -10,7 +10,7 @@ sudo apt-get install -y build-essential python-dev gcc g++ git cmake libboost-al
 
 # This is the folder where your source code snapshots will go
 # when you are done building.
-sourcefolder=~/Source/turtle-dev-build-$(date '+%Y-%m-%d-%H-%M')
+sourcefolder=~/Source/div-dev-build-$(date '+%Y-%m-%d-%H-%M')
 
 # Clear the workspace
 clear
@@ -23,8 +23,8 @@ cd ~/Source/
 # What's in the Source folder? Let's see.
 ls -al
 
-# Clone a copy of the TurtleCoin source code
-echo -e "\n\n\n== CLONING TurtleCoin in $sourcefolder"
+# Clone a copy of the DivCoin source code
+echo -e "\n\n\n== CLONING DivCoin in $sourcefolder"
 
 # By default we always push to the development branch, so if you 
 # want a nightly build, this is your best option. However, if you
@@ -32,7 +32,7 @@ echo -e "\n\n\n== CLONING TurtleCoin in $sourcefolder"
 # master branch instead, and it will get the source from the last
 # time that we merged development to master, which normally only
 # happens when we create a version release.
-git clone -b development https://github.com/turtlecoin/turtlecoin $sourcefolder
+git clone -b development https://github.com/divcoin/divcoin $sourcefolder
 cd $sourcefolder
 ls -al
 
@@ -47,7 +47,7 @@ ls -al
 # to use all of your cores to compile this, or if you get errors 
 # about not enough ram/swap, you can remove the -j`nproc` from 
 # the make command.
-echo -e "\n\n\n== BUILDING TurtleCoin"
+echo -e "\n\n\n== BUILDING DivCoin"
 cmake .. && make
 cd src
 ls -al
@@ -56,13 +56,13 @@ ls -al
 # distribution. We should also include the LICENSE file in this 
 # zip file just in case.
 echo -e "\n\n\n== COMPRESSING BINARIES"
-wget https://raw.githubusercontent.com/turtlecoin/turtlecoin/development/LICENSE
-zip turtlecoin-dev-bin-$(date +%F)-linux.zip miner LICENSE zedwallet TurtleCoind turtle-service
+wget https://raw.githubusercontent.com/divcoin/divcoin/development/LICENSE
+zip divcoin-dev-bin-$(date +%F)-linux.zip miner LICENSE zedwallet DivCoind div-service
 
 # Create directories to keep always-up-to-date binaries for 
 # TRTL Network files. Ideally, your bashrc has aliases to run
 # from this folder, or you can add it to your $PATH.
-mkdir -p ~/.Crypto/{Athena,TurtleCoin,Karai}
+mkdir -p ~/.Crypto/{Athena,DivCoin,Karai}
 mkdir ~/Binaries
 
 # Move the zip we created to the Binaries snapshot folder.
@@ -71,14 +71,14 @@ cd ~/Binaries
 
 # Copy the binaries to the folder we just created for them.
 # Remove the files that are already there just in case.
-rm ~/.Crypto/TurtleCoin/miner
-rm ~/.Crypto/TurtleCoin/zedwallet
-rm ~/.Crypto/TurtleCoin/TurtleCoind
-rm ~/.Crypto/TurtleCoin/turtle-service
-cp miner ~/.Crypto/TurtleCoin/miner
-cp zedwallet ~/.Crypto/TurtleCoin/zedwallet
-cp TurtleCoind ~/.Crypto/TurtleCoin/TurtleCoind
-cp turtle-service ~/.Crypto/TurtleCoin/turtle-service
+rm ~/.Crypto/DivCoin/miner
+rm ~/.Crypto/DivCoin/zedwallet
+rm ~/.Crypto/DivCoin/DivCoind
+rm ~/.Crypto/DivCoin/div-service
+cp miner ~/.Crypto/DivCoin/miner
+cp zedwallet ~/.Crypto/DivCoin/zedwallet
+cp DivCoind ~/.Crypto/DivCoin/DivCoind
+cp div-service ~/.Crypto/DivCoin/div-service
 
 
 

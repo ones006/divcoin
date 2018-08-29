@@ -7,13 +7,11 @@
 #include <Wallet/WalletGreen.h>
 
 bool fusionTX(CryptoNote::WalletGreen &wallet, 
-              CryptoNote::TransactionParameters p,
-              uint64_t height);
+              CryptoNote::TransactionParameters p);
 
-bool optimize(CryptoNote::WalletGreen &wallet, uint64_t threshold,
-              uint64_t height);
+bool optimize(CryptoNote::WalletGreen &wallet, uint64_t threshold);
 
-void fullOptimize(CryptoNote::WalletGreen &wallet, uint64_t height);
+void fullOptimize(CryptoNote::WalletGreen &wallet);
 
 size_t makeFusionTransaction(CryptoNote::WalletGreen &wallet, 
-                             uint64_t threshold, uint64_t height);
+                             uint64_t threshold);
